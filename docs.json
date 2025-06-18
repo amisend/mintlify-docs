@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Amisend",
   "colors": {
     "primary": "#171717",
     "light": "#FFFFFF",
@@ -27,19 +27,6 @@
         "group": "API Reference",
         "pages": [
           "api-reference/introduction"
-        ]
-      },
-      {
-        "group": "Email",
-        "pages": [
-          "api-reference/email/send-email",
-          "api-reference/email/update-email"
-        ]
-      },
-      {
-        "group": "Plants",
-        "pages": [
-          "api-reference/endpoint/create"
         ]
       }
     ]

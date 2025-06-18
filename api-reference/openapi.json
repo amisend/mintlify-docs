@@ -7,12 +7,457 @@
   "servers": [
     {
       "url": "https://api.amisend.com"
+    },
+    {
+      "url": "http://localhost:3015/api"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Email": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "team": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "reply_to": {
+            "type": "string"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiKey": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortApikey": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Audience": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Broadcast": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "team": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "audience": {
+            "type": "string"
+          },
+          "preview": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "blocknote": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
   "paths": {
-    "/contacts": {
+    "/emails": {
       "get": {
-        "summary": "List Contacts",
+        "summary": "List Emails",
+        "tags": [
+          "Email"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 40,
+              "maximum": 40
+            },
+            "description": "Maximum number of emails per page (max 40)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of emails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pages": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Email"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error getting emails"
+          }
+        }
+      },
+      "post": {
+        "summary": "Send Email",
+        "tags": [
+          "Email"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "example": "noreply@example.com"
+                  },
+                  "to": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "user1@example.com",
+                      "user2@example.com"
+                    ]
+                  },
+                  "subject": {
+                    "type": "string",
+                    "example": "Welcome!"
+                  },
+                  "html": {
+                    "type": "string",
+                    "example": "<h1>Hello</h1>"
+                  },
+                  "scheduledAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-06-17T12:00:00Z"
+                  },
+                  "reply_to": {
+                    "type": "string",
+                    "example": "support@example.com"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Emails queued successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Emails queued"
+                    },
+                    "id": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error queuing emails"
+          }
+        }
+      }
+    },
+    "/api-keys": {
+      "post": {
+        "summary": "Create API Key",
+        "tags": [
+          "ApiKey"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "My API Key"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API Key created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKey"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An API key with this name already exists"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error creating API key"
+          }
+        }
+      },
+      "get": {
+        "summary": "List API Keys",
+        "tags": [
+          "ApiKey"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of API Keys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKey"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "500": {
+            "description": "Error getting API keys"
+          }
+        }
+      }
+    },
+    "/api-keys/{id}": {
+      "delete": {
+        "summary": "Delete API Key",
+        "tags": [
+          "ApiKey"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the API Key to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API Key deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "API Key deleted successfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "API Key not found"
+          },
+          "500": {
+            "description": "Error deleting API Key"
+          }
+        }
+      }
+    },
+    "/audiences": {
+      "get": {
+        "summary": "List Audiences",
+        "tags": [
+          "Audience"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -25,23 +470,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filtrar por nombre"
-          },
-          {
-            "in": "query",
-            "name": "email",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filtrar por email"
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filtrar por estado"
+            "description": "Filter by name"
           },
           {
             "in": "query",
@@ -50,7 +479,7 @@
               "type": "integer",
               "default": 1
             },
-            "description": "Página de resultados"
+            "description": "Page number"
           },
           {
             "in": "query",
@@ -59,12 +488,239 @@
               "type": "integer",
               "default": 40
             },
-            "description": "Cantidad de resultados por página"
+            "description": "Number of results per page"
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de contactos",
+            "description": "List of audiences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pages": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Audience"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error getting audiences"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Audience",
+        "tags": [
+          "Audience"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Newsletter Subscribers"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Audience created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Name is required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error creating audience"
+          }
+        }
+      }
+    },
+    "/audiences/{id}": {
+      "get": {
+        "summary": "Retrieve Audience",
+        "tags": [
+          "Audience"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audience found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience not found"
+          },
+          "500": {
+            "description": "Error getting audience"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Audience",
+        "tags": [
+          "Audience"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Audience deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Audience deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience not found"
+          },
+          "500": {
+            "description": "Error deleting audience"
+          }
+        }
+      }
+    },
+    "/audiences/{id}/contacts": {
+      "get": {
+        "summary": "List Contacts",
+        "tags": [
+          "Contact"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 40
+            },
+            "description": "Number of results per page"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by name or email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contacts in the audience",
             "content": {
               "application/json": {
                 "schema": {
@@ -91,43 +747,579 @@
             }
           },
           "401": {
-            "description": "No autorizado - Token no válido o ausente"
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience not found"
+          },
+          "500": {
+            "description": "Error getting contacts"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Contact",
+        "tags": [
+          "Contact"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact added to audience",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email is required or contact already exists"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience not found"
+          },
+          "500": {
+            "description": "Error adding contact"
           }
         }
       }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+    },
+    "/audiences/{id}/contacts/{contactId}": {
+      "put": {
+        "summary": "Edit Contact",
+        "tags": [
+          "Contact"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          },
+          {
+            "in": "path",
+            "name": "contactId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the contact"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "subscribed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact updated in audience",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email is required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience or contact not found"
+          },
+          "500": {
+            "description": "Error updating contact"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Contact",
+        "tags": [
+          "Contact"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the audience"
+          },
+          {
+            "in": "path",
+            "name": "contactId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the contact"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Contact removed from audience",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audience"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Audience or contact not found"
+          },
+          "500": {
+            "description": "Error removing contact"
+          }
+        }
       }
     },
-    "schemas": {
-      "Contact": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
+    "/broadcasts": {
+      "get": {
+        "summary": "List Broadcasts",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by name"
           },
-          "name": {
-            "type": "string"
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by status"
           },
-          "email": {
-            "type": "string"
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
           },
-          "status": {
-            "type": "string"
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 40
+            },
+            "description": "Number of results per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of broadcasts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pages": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Broadcast"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
+          "401": {
+            "description": "Unauthorized"
           },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+          "500": {
+            "description": "Error getting broadcasts"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Broadcast created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Broadcast"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error creating broadcast"
+          }
+        }
+      }
+    },
+    "/broadcasts/{id}": {
+      "get": {
+        "summary": "Retrieve Broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the broadcast"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Broadcast found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Broadcast"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Broadcast not found"
+          },
+          "500": {
+            "description": "Error getting broadcast"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the broadcast"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Broadcast deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Broadcast deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Broadcast not found"
+          },
+          "500": {
+            "description": "Error deleting broadcast"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the broadcast"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Broadcast updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Broadcast"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Broadcast not found"
+          },
+          "500": {
+            "description": "Error updating broadcast"
+          }
+        }
+      }
+    },
+    "/broadcasts/{id}/send": {
+      "post": {
+        "summary": "Send Broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the broadcast"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Emails queued successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Emails queued"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Broadcast not found"
+          },
+          "500": {
+            "description": "Error sending broadcast"
+          }
+        }
+      }
+    },
+    "/broadcasts/unsubscribe/{broadcastId}/{contactId}": {
+      "patch": {
+        "summary": "Unsubscribe contact from broadcast",
+        "tags": [
+          "Broadcast"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "broadcastId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the broadcast"
+          },
+          {
+            "in": "path",
+            "name": "contactId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the contact"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contact unsubscribed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Contact unsubscribed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Broadcast or contact not found"
+          },
+          "500": {
+            "description": "Error unsubscribing contact"
           }
         }
       }

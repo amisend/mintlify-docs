@@ -1,0 +1,22 @@
+---
+title: 'Introduction'
+description: 'Base URL and Authentication'
+---
+
+## Base URL
+
+The Amisend API is built on REST principles. We enforce HTTPS in every request to improve data security, integrity, and privacy. The API does not support HTTP.
+
+All requests contain the following base URL:
+
+```cli
+https://api.amisend.com
+```
+
+## Authentication
+
+To authenticate you need to add an Authorization header with the contents of the header being Bearer ami_xxxxxxxxx where ami_xxxxxxxxx is your [API Key](https://amisend.com/api-keys).
+
+```cli
+Authorization: Bearer ami_xxxxxxxxx
+```

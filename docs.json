@@ -1,0 +1,73 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Mint Starter Kit",
+  "colors": {
+    "primary": "#171717",
+    "light": "#07C983",
+    "dark": "#15803D"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "anchors": [
+    {
+      "anchor": "Documentation",
+      "icon": "book-open",
+      "pages": [
+        "index",
+        "quickstart",
+        "development"
+      ]
+    },
+    {
+      "anchor": "API Reference",
+      "openapi": "api-reference/openapi.json",
+      "icon": "square-terminal",
+      "groups": [
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction"
+        ]
+      },
+      {
+        "group": "Email",
+        "pages": [
+          "api-reference/email/send-email",
+          "api-reference/email/update-email"
+        ]
+      },
+      {
+        "group": "Plants",
+        "pages": [
+          "api-reference/endpoint/create"
+        ]
+      }
+    ]
+    }
+  ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:contacto@amisend.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://www.amisend.com/login"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/amisend",
+      "linkedin": "https://www.linkedin.com/company/amisend/"
+    }
+  }
+}

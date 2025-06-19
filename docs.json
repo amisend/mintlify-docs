@@ -13,9 +13,20 @@
     {
       "anchor": "Documentation",
       "icon": "book-open",
-      "pages": [
-        "index",
-        "quickstart"
+
+      "groups": [
+        {
+          "group": "Documentation",
+          "pages": [
+            "index"
+          ]
+        },
+        {
+          "group": "Quickstart",
+          "pages": [
+            "quickstart/nodejs"
+          ]
+        }
       ]
     },
     {

@@ -1,0 +1,70 @@
+---
+title: Node.js SDK
+description: Node.js library documentation for the Amisend API.
+---
+
+## Installation
+
+<CodeGroup>
+  ```bash npm
+npm install --save amisend
+```
+
+```bash yarn
+yarn add amisend
+```
+</CodeGroup>
+
+
+## Getting Started
+
+### Authentication
+
+Create an account at [Amisend](https://amisend.com) and get your [API Key](https://amisend.com/api-keys).
+
+```js
+// CommonJS
+const Amisend = require("amisend");
+
+// ES6 / Typescript
+import Amisend from "amisend";
+
+const amisend = new Amisend({
+  apiKey: "YOUR_API_KEY",
+});
+```
+
+## Emails
+
+### Send an email
+
+```js
+amisend.emails
+  .send({
+    from: "Example <example@domain.com>",
+    to: ["example@hotmail.com"],
+    subject: "hello world",
+    html: "<p>It works!</p>",
+  })
+  .then((response) => {
+    // Handle response
+  })
+  .catch((error) => console.log(error)); // Handle error
+```
+
+## Contacts
+
+### Create a contact
+
+```js
+amisend.contacts.create({
+  name: "Sebastián",
+  email: "example@hotmail.com",
+  audienceId: "aaaa-bbbb-cccc-dddd"
+})
+.then((response) => {
+  // Handle response
+})
+.catch((error) => console.log(error)); // Handle error
+```
+
